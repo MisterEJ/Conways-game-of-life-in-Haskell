@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-module Game(process, State(..), ready, render, cellCount, generateCells, checkCell) where
+module Game(process, State(..), ready, render, cellCount, generateCells, checkCell, changeState) where
 
 import Types
 import Render (renderRect)
@@ -14,7 +14,7 @@ cellCount :: (Int, Int)
 cellCount = (floor (1024 / cellSize), round (768 / cellSize))
 
 generateCells :: [Rectangle]
-generateCells = [Rectangle (cellSize * fromIntegral x, fromIntegral y * cellSize) (cellSize, cellSize) (1, 1, 1) | x <- [0..fst cellCount - 1],  y <- [0..snd cellCount - 1]]
+generateCells = [Rectangle (cellSize * fromIntegral x, fromIntegral y * cellSize) (cellSize, cellSize) (0, 0, 0) | x <- [0..fst cellCount - 1],  y <- [0..snd cellCount - 1]]
 
 ready :: State
 ready = State generateCells
@@ -43,7 +43,19 @@ checkCell (Rectangle (x,y) s' c') c = do
         checkList :: (Float, Float) -> [(Float, Float)]
         checkList (x,y) = [(x + cellSize, y + cellSize), (x + cellSize, y), (x + cellSize, y - cellSize), (x, y - cellSize), (x - cellSize, y - cellSize), (x - cellSize, y), (x - cellSize, y + cellSize), (x, y + cellSize)]
 
-
+changeState :: State -> (Float, Float) -> State
+changeState (State l) rect = State $ changeState' l rect
+    where
+        changeState' :: [Rectangle] -> (Float, Float) -> [Rectangle]
+        changeState' [] _ = []
+        changeState' (rect0@(Rectangle (x,y) s (c, _, _)):xs) rect'@(x1,y1) = do
+            let x3 = fromIntegral $ floor (x1 / 16) * 16 + 16
+            let y3 = fromIntegral $ floor (y1 / 16) * 16 + 16
+            if x == x3 && y == y3
+                then if c == 1
+                    then Rectangle (x,y) s (0, 0, 0) : changeState' xs rect'
+                    else Rectangle (x,y) s (1, 1, 1) : changeState' xs rect'
+                else rect0 : changeState' xs rect'
 
 render :: State -> IO ()
 render (State cells') = forM_ cells' renderRect

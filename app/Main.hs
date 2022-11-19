@@ -3,6 +3,7 @@ import Graphics.UI.GLUT
 import Bindings ( keyboardMouse, reshape, display, idle, display )
 import Data.IORef (newIORef)
 import Game
+import Types
 
 main :: IO ()
 main = do
@@ -11,11 +12,13 @@ main = do
   _window <- createWindow "Conways game of life"
   windowSize $= Size 1024 768
   reshapeCallback $= Just reshape
-  keyboardMouseCallback $= Just keyboardMouse
 
   state <- newIORef ready
+  isRunning <- newIORef False
 
-  idleCallback $= Just (idle state)
+  keyboardMouseCallback $= Just (keyboardMouse isRunning state)
+
+  idleCallback $= Just (idle state isRunning)
   displayCallback $= display state
 
   mainLoop

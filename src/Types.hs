@@ -1,5 +1,5 @@
 module Types where
 import Graphics.Rendering.OpenGL
 
-data Rectangle = Rectangle (GLfloat, GLfloat) (GLfloat, GLfloat) (GLfloat, GLfloat, GLfloat)
+data Rectangle = Rectangle (Float, Float) (Float, Float) (Float, Float, Float)
     deriving Show
