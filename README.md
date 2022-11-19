@@ -3,6 +3,10 @@
 
 <h3>Used dependencies: OpenGL and GLUT<h3>
 
-Use Mouse Left button to place/remove cells
+<p>Use Mouse Left button to place/remove cells<p>
 
-When done press space to start/stop simulation
+<p>When done press space to start/stop simulation<p>
+
+
+<h3>For Windows Users:<h3>
+<p>You may need to install freeglut.dll into c:/Windows/System32 or put it int the same directory as the executable<p>
